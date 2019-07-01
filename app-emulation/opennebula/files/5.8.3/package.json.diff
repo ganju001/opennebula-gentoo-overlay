@@ -1,0 +1,14 @@
+diff --git a/src/sunstone/public/package.json b/src/sunstone/public/package.json
+index f085636f6..abc566780 100644
+--- a/src/sunstone/public/package.json
++++ b/src/sunstone/public/package.json
+@@ -6,7 +6,7 @@
+     "grunt-cli": "^1.2.0",
+     "grunt-contrib-requirejs": "^1.0.0",
+     "grunt-contrib-watch": "^1.0.0",
+-    "grunt-sass": "^1.2.1",
+-    "node-sass": "^3.10.1"
++    "grunt-sass": "^3.0.2",
++    "node-sass": "*"
+   }
+ }

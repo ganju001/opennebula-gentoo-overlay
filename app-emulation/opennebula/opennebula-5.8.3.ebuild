@@ -73,6 +73,7 @@ src_unpack() {
 	cd src/sunstone/public
 	rm -rf node_modules
 	rm -rf dist
+	epatch "${FILESDIR}/${PV}/package.json.diff"
 	npm install
 	sh build.sh -d
 	npm install
