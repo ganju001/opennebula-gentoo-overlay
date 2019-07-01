@@ -73,8 +73,9 @@ src_unpack() {
 	rm -rf src/sunstone/public/node_modules
         rm -rf src/sunstone/public/dist
 	cd src/sunstone/public
+	rm -rf dist
 	npm install
-	bower install
+	sh build.sh -d
 	cd ../../..
 	
 }
@@ -83,14 +84,12 @@ src_prepare() {
 	default
 
 	sed -i -e 's|chmod|true|' install.sh || die "sed failed"
-	rm -rf src/sunstone/public/node_modules
-	rm -rf src/sunstone/public/dist
 
 	epatch "${FILESDIR}/${PV}/SConstruct.diff"
  	epatch "${FILESDIR}/${PV}/websocket.py.diff"
 	epatch "${FILESDIR}/${PV}/websocketproxy.py.diff"
 	epatch "${FILESDIR}/${PV}/OpenNebulaVNC.rb.diff"
-#	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
+	cp "${FILESDIR}/${PV}/SConstruct.man" "${S}/share/man/SConstruct"
 	eapply_user
 }
 
