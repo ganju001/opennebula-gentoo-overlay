@@ -65,9 +65,9 @@ pkg_setup () {
 	enewuser ${ONEUSER} -1 /bin/bash /var/lib/one ${ONEGROUP}
 }
 
-src_unpack() {
-	default
-}
+#src_unpack() {
+#	default
+#}
 
 src_prepare() {
 	default
