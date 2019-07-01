@@ -98,12 +98,8 @@ src_compile() {
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
 		|| die "building ${PN} failed"
 
-	cd src/sunstone/public
-	build.sh
-	cd ../../..
-	cd share/man
-	build.sh
-	cd ../..
+	cd src/sunstone/public && ./build.sh && cd ../../..
+	cd share/man && ./build.sh && cd ../..
 }
 
 src_install() {
