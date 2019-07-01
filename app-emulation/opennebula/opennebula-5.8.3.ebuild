@@ -65,9 +65,17 @@ pkg_setup () {
 	enewuser ${ONEUSER} -1 /bin/bash /var/lib/one ${ONEGROUP}
 }
 
-#src_unpack() {
-#	default
-#}
+src_unpack() {
+	git-r3_src_unpack
+	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
+	rm -rf src/sunstone/public/node_modules
+        rm -rf src/sunstone/public/dist
+	cd src/sunstone/public
+	npm install
+	bower install
+	cd ../../..
+	
+}
 
 src_prepare() {
 	default
@@ -80,8 +88,7 @@ src_prepare() {
  	epatch "${FILESDIR}/${PV}/websocket.py.diff"
 	epatch "${FILESDIR}/${PV}/websocketproxy.py.diff"
 	epatch "${FILESDIR}/${PV}/OpenNebulaVNC.rb.diff"
-	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
-
+#	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
 	eapply_user
 }
 
