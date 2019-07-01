@@ -98,8 +98,8 @@ src_compile() {
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
 		|| die "building ${PN} failed"
 
-	cd src/sunstone/public && ./build.sh && cd ../../..
-	cd share/man && ./build.sh && cd ../..
+	cd src/sunstone/public && sh build.sh -d && sh build.sh && cd ../../..
+	cd share/man && sh build.sh -d && sh build.sh && cd ../..
 }
 
 src_install() {
@@ -120,7 +120,7 @@ src_install() {
 	dodir /var/tmp/one
 	# we have to preserve the executable bits
 	cp -a lib/* "${D}/usr/$(get_libdir)/one/" || die "copying lib files failed"
-	dosym "${D}/usr/$(get_libdir)/one/" "${D}/usr/lib/one/" || die "creating symlink failed"
+	ln -s "${D}/usr/$(get_libdir)/one/" "${D}/usr/lib/one/" || die "creating symlink failed"
 
 	insinto /usr/share/doc/${PF}
 	doins -r share/examples
