@@ -1,0 +1,12 @@
+diff --git a/SConstruct b/SConstruct
+index e758fc2dd..35a8fca8f 100755
+--- a/SConstruct
++++ b/SConstruct
+@@ -277,6 +277,7 @@ build_scripts=[
+     'src/ipamm/SConstruct',
+     'src/sunstone/public/locale/languages/SConstruct',
+     'src/sunstone/public/SConstruct',
++    'share/man/SConstruct',
+     'share/rubygems/SConstruct',
+     'src/im_mad/collectd/SConstruct',
+     'src/client/SConstruct',

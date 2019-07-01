@@ -19,7 +19,7 @@ EGIT_CHECKOUT_DIR=${WORKDIR}/${P}
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="qemu +mysql xen sqlite +extras systemd"
+IUSE="qemu +mysql xen sqlite +extras systemd sunstone man"
 
 RDEPEND=">=dev-libs/xmlrpc-c-1.18.02[abyss,cxx,threads]
 	dev-lang/ruby
@@ -76,10 +76,11 @@ src_prepare() {
 	rm -rf src/sunstone/public/node_modules
 	rm -rf src/sunstone/public/dist
 
-	#epatch "${FILESDIR}/${PV}/install.sh.diff"
+	epatch "${FILESDIR}/${PV}/SConstruct.diff"
  	epatch "${FILESDIR}/${PV}/websocket.py.diff"
 	epatch "${FILESDIR}/${PV}/websocketproxy.py.diff"
 	epatch "${FILESDIR}/${PV}/OpenNebulaVNC.rb.diff"
+	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
 
 	eapply_user
 }
@@ -93,13 +94,12 @@ src_compile() {
 	local myconf
 	use extras && myconf+="new_xmlrpc=yes "
 	use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
+	use sunstone && myconf+="sunstone=yes "
+	use manpages && myconf+="manpages=yes "
 	python2.7 $(which scons) \
 		${myconf} \
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
 		|| die "building ${PN} failed"
-
-	cd src/sunstone/public && sh build.sh -d && sh build.sh && cd ../../..
-	cd share/man && sh build.sh -d && sh build.sh && cd ../..
 }
 
 src_install() {
