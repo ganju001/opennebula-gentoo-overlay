@@ -70,6 +70,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
+
 	sed -i -e 's|chmod|true|' install.sh || die "sed failed"
 	rm -rf src/sunstone/public/node_modules
 	rm -rf src/sunstone/public/dist
@@ -78,7 +80,6 @@ src_prepare() {
  	epatch "${FILESDIR}/${PV}/websocket.py.diff"
 	epatch "${FILESDIR}/${PV}/websocketproxy.py.diff"
 	epatch "${FILESDIR}/${PV}/OpenNebulaVNC.rb.diff"
-
 
 	eapply_user
 }
