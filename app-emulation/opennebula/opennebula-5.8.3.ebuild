@@ -103,7 +103,7 @@ src_compile() {
 	cd ../../..
 	cd share/man
 	build.sh
-	cd ../../..
+	cd ../..
 }
 
 src_install() {
