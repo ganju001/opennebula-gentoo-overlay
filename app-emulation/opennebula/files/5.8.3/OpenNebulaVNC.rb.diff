@@ -1,0 +1,13 @@
+diff --git a/src/sunstone/OpenNebulaVNC.rb b/src/sunstone/OpenNebulaVNC.rb
+index 120f2a174..6ee7cbc69 100644
+--- a/src/sunstone/OpenNebulaVNC.rb
++++ b/src/sunstone/OpenNebulaVNC.rb
+@@ -151,7 +151,7 @@ class OpenNebulaVNC
+             proxy_options << " -6"
+         end
+ 
+-        cmd ="python #{@proxy_path} #{proxy_options} #{@proxy_port}"
++        cmd ="python2 #{@proxy_path} #{proxy_options} #{@proxy_port}"
+ 
+         begin
+             @logger.info { "Starting VNC proxy: #{cmd}" }

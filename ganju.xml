@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+
+<repositories version="1.0">
+	<repo priority="50" quality="experimental" status="unofficial">
+		<name>ganju</name>
+		<description>Opennebula repository</description>
+		<homepage>No homepage</homepage>
+		<owner>
+			<email>ganju001@gmail.com</email>
+		</owner>
+		<source type="git"></source>
+	</repo>
+</repositories>
