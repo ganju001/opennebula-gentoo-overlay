@@ -76,7 +76,7 @@ src_prepare() {
 	rm -rf src/sunstone/public/node_modules
 	rm -rf src/sunstone/public/dist
 
-	epatch "${FILESDIR}/${PV}/install.sh.diff"
+	#epatch "${FILESDIR}/${PV}/install.sh.diff"
  	epatch "${FILESDIR}/${PV}/websocket.py.diff"
 	epatch "${FILESDIR}/${PV}/websocketproxy.py.diff"
 	epatch "${FILESDIR}/${PV}/OpenNebulaVNC.rb.diff"
