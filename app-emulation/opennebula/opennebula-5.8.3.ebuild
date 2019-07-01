@@ -95,7 +95,7 @@ src_compile() {
 	use extras && myconf+="new_xmlrpc=yes "
 	use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
 	use sunstone && myconf+="sunstone=yes "
-	use manpages && myconf+="manpages=yes "
+	use man && myconf+="manpages=yes "
 	python2.7 $(which scons) \
 		${myconf} \
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
