@@ -5,7 +5,7 @@
 EAPI=6
 USE_RUBY="ruby24 ruby25 ruby26"
 
-inherit user eutils multilib ruby-ng systemd
+inherit user eutils multilib ruby-ng systemd git-r3
 
 MY_P="opennebula-${PV/_/-}"
 
