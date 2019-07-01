@@ -70,12 +70,12 @@ src_unpack() {
 	cd ${S}
 	ls -la
 	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
-	rm -rf src/sunstone/public/node_modules
-        rm -rf src/sunstone/public/dist
 	cd src/sunstone/public
+	rm -rf node_modules
 	rm -rf dist
 	npm install
 	sh build.sh -d
+	npm install
 	cd ../../..
 	
 }
