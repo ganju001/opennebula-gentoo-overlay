@@ -75,10 +75,9 @@ src_unpack() {
 	rm -rf dist
 	epatch "${FILESDIR}/${PV}/package.json.diff"
 	npm install
+	bower update
 	sh build.sh -d
-	npm install
 	cd ../../..
-	
 }
 
 src_prepare() {
@@ -105,6 +104,9 @@ src_compile() {
 	use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
 	use sunstone && myconf+="sunstone=yes "
 	use man && myconf+="manpages=yes "
+
+	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
+
 	python2.7 $(which scons) \
 		${myconf} \
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
