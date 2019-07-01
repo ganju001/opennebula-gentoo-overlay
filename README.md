@@ -1,2 +1,2 @@
-# ssnb-overlay
+# ganju-overlay
 My public gentoo overlay
