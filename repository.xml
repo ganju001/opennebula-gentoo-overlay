@@ -4,10 +4,10 @@
 	<repo priority="50" quality="experimental" status="unofficial">
 		<name>ganju</name>
 		<description>Opennebula repository</description>
-		<homepage>No homepage</homepage>
+		<homepage>https://github.com/ganju001/opennebula-gentoo-overlay</homepage>
 		<owner>
-			<email>ganju001@gmail.com</email>
+			<email>invalidemail@gmail.com</email>
 		</owner>
-		<source type="git"></source>
+		<source type="git">https://github.com/ganju001/opennebula-gentoo-overlay.git</source>
 	</repo>
 </repositories>
