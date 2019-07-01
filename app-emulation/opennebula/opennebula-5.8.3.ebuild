@@ -67,6 +67,7 @@ pkg_setup () {
 
 src_unpack() {
 	git-r3_src_unpack
+	cd ${S}
 	ls -la
 	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
 	rm -rf src/sunstone/public/node_modules
