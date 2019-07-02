@@ -120,6 +120,8 @@ src_compile() {
 		${myconf} \
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
 		|| die "building ${PN} failed"
+	rm -rf src/sunstone/public/dist/main.js
+	cp src/sunstone/public/dist/main-dist.js src/sunstone/public/dist/main.js
 }
 
 src_install() {
