@@ -84,7 +84,7 @@ src_unpack() {
 	DIR=${PWD}
         cd bower_components/no-vnc/
         rm -rf node_modules
-        npm intall
+        npm install
         cd ${DIR}  
 	cd ../../..
 }
