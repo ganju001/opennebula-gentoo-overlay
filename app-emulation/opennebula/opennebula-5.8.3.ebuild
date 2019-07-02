@@ -75,10 +75,10 @@ src_unpack() {
 	rm -rf dist
 	epatch "${FILESDIR}/${PV}/package.json.diff"
 	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
+	sh build.sh -d
 	npm install
 	bower update
 	bower install
-	sh build.sh -d
 	cd ../../..
 }
 
