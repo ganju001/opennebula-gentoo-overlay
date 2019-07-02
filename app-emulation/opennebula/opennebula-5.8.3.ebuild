@@ -77,7 +77,7 @@ src_unpack() {
 	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
 	sh build.sh -d
 	npm install
-	bower update
+	#bower update
 	bower install
 	cd ../../..
 }
