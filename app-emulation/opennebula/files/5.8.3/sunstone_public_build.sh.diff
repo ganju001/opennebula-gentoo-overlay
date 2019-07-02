@@ -1,0 +1,19 @@
+diff --git a/src/sunstone/public/build.sh b/src/sunstone/public/build.sh
+index 58f7ff94e..08e9384ac 100755
+--- a/src/sunstone/public/build.sh
++++ b/src/sunstone/public/build.sh
+@@ -27,11 +27,11 @@ dependencies() {
+ 
+ install_patch() {
+ 
+-    npm install
++    #npm install
+ 
+-    bower install --force --allow-root --config.interactive=false
++    #bower install --force --allow-root --config.interactive=false
+ 
+-    (cd bower_components/no-vnc/ && npm install && ./utils/use_require.js --clean --as amd && sed -i -e "s/'\.\//'\.\.\/bower_components\/no-vnc\/lib\//g" lib/rfb.js )
++    #(cd bower_components/no-vnc/ && npm install && ./utils/use_require.js --clean --as amd && sed -i -e "s/'\.\//'\.\.\/bower_components\/no-vnc\/lib\//g" lib/rfb.js )
+ 
+     PATCH_DIR="./patches/"
+ 
