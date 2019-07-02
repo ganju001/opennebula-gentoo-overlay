@@ -71,15 +71,21 @@ src_unpack() {
 	ls -la
 	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
 	cd src/sunstone/public
+	mkdir patches
 	rm -rf node_modules
-	rm -rf dist
+	rm -rf dist	
+
 	epatch "${FILESDIR}/${PV}/package.json.diff"
 	epatch "${FILESDIR}/${PV}/sunstone_public_build.sh.diff"
 	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
 	sh build.sh -d
 	npm install
-	#bower update
 	bower install
+	DIR=${PWD}
+        cd bower_components/no-vnc/
+        rm -rf node_modules
+        npm intall
+        cd ${DIR}  
 	cd ../../..
 }
 
