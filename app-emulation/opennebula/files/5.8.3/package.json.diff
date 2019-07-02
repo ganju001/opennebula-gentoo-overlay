@@ -8,7 +8,7 @@ index f085636f6..abc566780 100644
      "grunt-contrib-watch": "^1.0.0",
 -    "grunt-sass": "^1.2.1",
 -    "node-sass": "^3.10.1"
-+    "grunt-sass": "^3.0.2",
++    "grunt-sass": "^2.1.0",
 +    "node-sass": "*"
    }
  }
