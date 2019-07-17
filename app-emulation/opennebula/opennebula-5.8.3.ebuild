@@ -69,7 +69,13 @@ src_unpack() {
 	git-r3_src_unpack
 	cd ${S}
 	ls -la
-	scons SConstruct prepare_only=yes
+	local myconf
+        myconfig+="prepare_only=yes "
+        use extras && myconf+="new_xmlrpc=yes "
+        use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
+        use sunstone && myconf+="sunstone=yes "
+        use man && myconf+="man=yes "
+	python2.7 $(which scons) SConstruct ${myconf} 
 }
 
 src_prepare() {
