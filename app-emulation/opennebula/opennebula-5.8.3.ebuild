@@ -12,14 +12,14 @@ MY_P="opennebula-${PV/_/-}"
 DESCRIPTION="OpenNebula Virtual Infrastructure Engine"
 HOMEPAGE="http://www.opennebula.org/"
 #SRC_URI="http://downloads.opennebula.org/packages/${PN}-${PV}/${PN}-${PV}.tar.gz"
-EGIT_REPO_URI="https://github.com/OpenNebula/one.git"
-EGIT_COMMIT="release-${PV}"
+EGIT_REPO_URI="https://github.com/ganju001/one.git"
+EGIT_COMMIT="ganju-release-${PV}"
 EGIT_CHECKOUT_DIR=${WORKDIR}/${P}
 
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="qemu +mysql xen sqlite +extras systemd sunstone man"
+IUSE="qemu mysql xen sqlite +extras systemd sunstone man"
 
 RDEPEND=">=dev-libs/xmlrpc-c-1.18.02[abyss,cxx,threads]
 	dev-lang/ruby
@@ -69,24 +69,7 @@ src_unpack() {
 	git-r3_src_unpack
 	cd ${S}
 	ls -la
-	cp "${FILESDIR}/${PV}/SConstruct.man" "share/man/SConstruct"
-	cd src/sunstone/public
-	mkdir patches
-	rm -rf node_modules
-	rm -rf dist	
-
-	epatch "${FILESDIR}/${PV}/package.json.diff"
-	epatch "${FILESDIR}/${PV}/sunstone_public_build.sh.diff"
-	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
-	sh build.sh -d
-	npm install
-	bower install
-	DIR=${PWD}
-        cd bower_components/no-vnc/
-        rm -rf node_modules
-        npm install
-        cd ${DIR}  
-	cd ../../..
+	scons SConstruct prepare_only=yes
 }
 
 src_prepare() {
@@ -109,10 +92,11 @@ src_configure() {
 src_compile() {
 
 	local myconf
+	myconfig+="build_only=yes "
 	use extras && myconf+="new_xmlrpc=yes "
 	use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
 	use sunstone && myconf+="sunstone=yes "
-	use man && myconf+="manpages=yes "
+	use man && myconf+="man=yes "
 
 	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
 
