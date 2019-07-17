@@ -13,7 +13,7 @@ DESCRIPTION="OpenNebula Virtual Infrastructure Engine"
 HOMEPAGE="http://www.opennebula.org/"
 #SRC_URI="http://downloads.opennebula.org/packages/${PN}-${PV}/${PN}-${PV}.tar.gz"
 EGIT_REPO_URI="https://github.com/ganju001/one.git"
-EGIT_COMMIT="download_before_build"
+EGIT_BRANCH="download_before_build"
 EGIT_CHECKOUT_DIR=${WORKDIR}/${P}
 
 LICENSE="Apache-2.0"
