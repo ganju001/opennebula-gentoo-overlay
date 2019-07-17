@@ -92,7 +92,6 @@ src_configure() {
 src_compile() {
 
 	local myconf
-	myconfig+="build_only=yes "
 	use extras && myconf+="new_xmlrpc=yes "
 	use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
 	use sunstone && myconf+="sunstone=yes "
@@ -100,7 +99,7 @@ src_compile() {
 
 	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
 
-	python2.7 $(which scons) \
+	python2.7 $(which scons) build_only=yes \
 		${myconf} \
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
 		|| die "building ${PN} failed"
