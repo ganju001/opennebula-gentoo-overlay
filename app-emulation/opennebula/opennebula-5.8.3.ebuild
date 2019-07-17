@@ -69,13 +69,7 @@ src_unpack() {
 	git-r3_src_unpack
 	cd ${S}
 	ls -la
-	local myconf
-        myconfig+="prepare_only=yes "
-        use extras && myconf+="new_xmlrpc=yes "
-        use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
-        use sunstone && myconf+="sunstone=yes "
-        use man && myconf+="man=yes "
-	python2.7 $(which scons) SConstruct ${myconf} 
+	cd src/sunstone/public && sh build.sh -p 
 }
 
 src_prepare() {
