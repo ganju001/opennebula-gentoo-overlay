@@ -105,6 +105,9 @@ src_compile() {
 		|| die "building ${PN} failed"
 	rm -rf src/sunstone/public/dist/main.js
 	cp src/sunstone/public/dist/main-dist.js src/sunstone/public/dist/main.js
+
+	cd share/man
+	sh ./build.sh
 }
 
 src_install() {
