@@ -1,0 +1,17 @@
+diff --git a/install.sh b/install.sh
+index 6aee675b9..ef9ab38ed 100755
+--- a/install.sh
++++ b/install.sh
+@@ -2321,7 +2321,11 @@ if [ "$UNINSTALL" = "no" ] ; then
+     if [ "$SUNSTONE" = "yes" ] || [ "$SUNSTONE_DEV" = "yes" ] ; then
+         touch $DESTDIR$VAR_LOCATION/sunstone/main.js
+         rm -f $DESTDIR$SUNSTONE_LOCATION/public/dist/main.js
+-        ln -s $VAR_LOCATION/sunstone/main.js $DESTDIR$SUNSTONE_LOCATION/public/dist/main.js
++	if [ "$LINK" = "yes" ]; then
++            ln -s $VAR_LOCATION/sunstone/main.js $DESTDIR$SUNSTONE_LOCATION/public/dist/main.js
++        else
++            cp -dereference $VAR_LOCATION/sunstone/main.js $DESTDIR$SUNSTONE_LOCATION/public/dist/main.js
++        fi
+     fi
+     for d in $CHOWN_DIRS; do
+         chown -R $ONEADMIN_USER:$ONEADMIN_GROUP $DESTDIR$d

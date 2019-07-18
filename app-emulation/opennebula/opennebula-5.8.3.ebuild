@@ -3,23 +3,23 @@
 # $Header: $
 
 EAPI=6
-USE_RUBY="ruby24 ruby25 ruby26"
+USE_RUBY="ruby22 ruby23 ruby24 ruby25"
 
-inherit user eutils multilib ruby-ng systemd git-r3
+inherit user eutils multilib ruby-ng systemd git-r3 flag-o-matic npm-tools
 
 MY_P="opennebula-${PV/_/-}"
 
 DESCRIPTION="OpenNebula Virtual Infrastructure Engine"
 HOMEPAGE="http://www.opennebula.org/"
 #SRC_URI="http://downloads.opennebula.org/packages/${PN}-${PV}/${PN}-${PV}.tar.gz"
-EGIT_REPO_URI="https://github.com/ganju001/one.git"
-EGIT_BRANCH="download_before_build"
+EGIT_REPO_URI="https://github.com/OpenNebula/one.git"
+EGIT_COMMIT="release-${PV}"
 EGIT_CHECKOUT_DIR=${WORKDIR}/${P}
-
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="~amd64"
-IUSE="qemu mysql xen sqlite +extras systemd sunstone man"
+#KEYWORDS="~amd64"
+KEYWORDS=""
+IUSE="qemu +mysql xen sqlite +extras systemd +sunstone"
 
 RDEPEND=">=dev-libs/xmlrpc-c-1.18.02[abyss,cxx,threads]
 	dev-lang/ruby
@@ -30,6 +30,7 @@ RDEPEND=">=dev-libs/xmlrpc-c-1.18.02[abyss,cxx,threads]
 		dev-libs/expat
 		dev-ruby/uuidtools
 		dev-ruby/amazon-ec2
+		dev-ruby/aws-sdk
 		dev-ruby/webmock
 		dev-ruby/mysql
 		dev-ruby/mysql2
@@ -38,24 +39,44 @@ RDEPEND=">=dev-libs/xmlrpc-c-1.18.02[abyss,cxx,threads]
 		dev-ruby/treetop
 		dev-ruby/xml-simple
 		dev-ruby/zendesk_api
+		dev-ruby/ruby-net-ldap
+		dev-ruby/rack
+		dev-ruby/sinatra
+		dev-ruby/thin
+		dev-ruby/memcache-client
+		dev-ruby/curb
+		dev-ruby/trollop
+		dev-ruby/azure
+		dev-ruby/safe_yaml
 		dev-libs/log4cpp )
 	mysql? ( virtual/mysql )
 	dev-db/sqlite
 	net-misc/openssh
-	net-libs/libvncserver
 	|| ( app-cdr/cdrkit app-cdr/cdrtools )
 	sqlite? ( dev-ruby/sqlite3 )
 	qemu? ( app-emulation/libvirt[libvirtd,qemu] )
 	xen? ( app-emulation/xen-tools )"
 DEPEND="${RDEPEND}
+	sunstone? ( net-libs/nodejs[npm] dev-nodejs/bower dev-nodejs/grunt dev-nodejs/grunt-cli dev-nodejs/ini dev-nodejs/braces )
 	>=dev-util/scons-1.2.0-r1
-	app-text/ronn
-	dev-ruby/nokogiri"
+	dev-python/configparser
+	dev-ruby/configparser
+	dev-ruby/rubygems
+	dev-ruby/rake
+	dev-ruby/xmlparser
+	dev-ruby/ox
+	dev-ruby/builder
+	sys-devel/make
+	dev-ruby/nokogiri
+	sys-devel/flex
+	sys-devel/bison
+"
 
 # make sure no eclass is running tests
 RESTRICT="test"
 
-S="${WORKDIR}/${PN}-${PV}"
+#S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${P}"
 
 ONEUSER="oneadmin"
 ONEGROUP="oneadmin"
@@ -66,23 +87,22 @@ pkg_setup () {
 }
 
 src_unpack() {
-	git-r3_src_unpack
-	cd ${S}
-	ls -la
-	cd src/sunstone/public && sh build.sh -p 
+	default
+	if use sunstone; then
+		npm_install ${S}/src/sunstone/public/
+		cd src/sunstone/public/
+		bower install --force --allow-root --config.interactive=false
+		npm_install ${S}/src/sunstone/public/bower_components/no-vnc/
+		(cd bower_components/no-vnc/ && ./utils/use_require.js --clean --as amd && sed -i -e "s/'\.\//'\.\.\/bower_components\/no-vnc\/lib\//g" lib/rfb.js )
+	fi
 }
 
 src_prepare() {
+	epatch "${FILESDIR}/fix_kvm_emulator.patch"
+        epatch ${FILESDIR}/sunstone_public_build.sh.patch
+        epatch ${FILESDIR}/install.sh.patch
 	default
-
 	sed -i -e 's|chmod|true|' install.sh || die "sed failed"
-
-	epatch "${FILESDIR}/${PV}/SConstruct.diff"
- 	epatch "${FILESDIR}/${PV}/websocket.py.diff"
-	epatch "${FILESDIR}/${PV}/websocketproxy.py.diff"
-	epatch "${FILESDIR}/${PV}/OpenNebulaVNC.rb.diff"
-	cp "${FILESDIR}/${PV}/SConstruct.man" "${S}/share/man/SConstruct"
-	eapply_user
 }
 
 src_configure() {
@@ -90,24 +110,24 @@ src_configure() {
 }
 
 src_compile() {
+	# force definition of nodejs path for grunt to work
+	local node_path="/usr/$(get_libdir)/node_modules"
+
+	# http://lists.ceph.com/pipermail/users-opennebula.org/2011-June/033132.html
+	#filter-ldflags -lpthread
 
 	local myconf
-	use extras && myconf+="new_xmlrpc=yes "
+	# This builds the vanilla OpenNebula package. Tweak this line as desired.
+	myconf+="parsers=yes "
+	use sunstone && myconf+="sunstone=yes " || myconf+="sunstone=no "
+	use extras && myconf+="new_xmlrpc=yes " || myconf+="new_xmlrpc=no "
 	use mysql && myconf+="mysql=yes " || myconf+="mysql=no "
-	use sunstone && myconf+="sunstone=yes "
-	use man && myconf+="man=yes "
-
-	export PATH=$PATH:${S}/src/sunstone/public/node_modules/.bin
-
-	python2.7 $(which scons) build_only=yes \
+	use sqlite && myconf+="sqlite=yes " || myconf+="sqlite=no "
+	use systemd && myconf+="systemd=yes " || myconf+="systemd=no "
+	NODE_PATH=${node_path} python2.7  $(which scons) \
 		${myconf} \
 		$(sed -r 's/.*(-j\s*|--jobs=)([0-9]+).*/-j\2/' <<< ${MAKEOPTS}) \
 		|| die "building ${PN} failed"
-	rm -rf src/sunstone/public/dist/main.js
-	cp src/sunstone/public/dist/main-dist.js src/sunstone/public/dist/main.js
-
-	cd share/man
-	sh ./build.sh
 }
 
 src_install() {
@@ -128,7 +148,6 @@ src_install() {
 	dodir /var/tmp/one
 	# we have to preserve the executable bits
 	cp -a lib/* "${D}/usr/$(get_libdir)/one/" || die "copying lib files failed"
-	ln -s "${D}/usr/$(get_libdir)/one/" "${D}/usr/lib/one/" || die "creating symlink failed"
 
 	insinto /usr/share/doc/${PF}
 	doins -r share/examples
@@ -139,8 +158,6 @@ src_install() {
 	dodir /etc/tmpfiles.d
 	# we have to preserve the executable bits
 	cp -a var/remotes "${D}/var/lib/one/" || die "copying remotes failed"
-	cp -a var/sunstone "${D}/var/lib/one/" || die "copying sunstone failed"
-	cp -a var/datastores "${D}/var/lib/one/" || die "copying datastores failed"
 	cp -a share/* "${D}/usr/share/one/" || die "copying share failed"
 
 	doenvd "${FILESDIR}/99one"
@@ -152,7 +169,7 @@ src_install() {
 	newconfd "${FILESDIR}/sunstone-server.confd" sunstone-server
 	newconfd "${FILESDIR}/oneflow-server.confd" oneflow-server
 
-	use systemd && systemd_dounit "${FILESDIR}"/opennebula{,-sunstone,-econe,-oneflow,-onegate}.service
+	use systemd && systemd_dounit "${FILESDIR}"/opennebula{,-sunstone,-econe,-oneflow,-onegate,-scheduler,-novnc}.service
 
 	insinto /etc/one
 	insopts -m 0640
@@ -160,7 +177,10 @@ src_install() {
 	doins "${FILESDIR}/one_auth"
 
 	insinto /etc/tmpfiles.d
-	doins "${FILESDIR}/tmpfilesd.opennebula.conf"
+	newins "${FILESDIR}/tmpfilesd.opennebula.conf" "opennebula.conf"
+
+	insinto /etc/logrotate.d
+	newins "${FILESDIR}/logrotated.opennebula" "opennebula"
 
 }
 
@@ -207,8 +227,26 @@ EOF
 		elog "to work around this until OpenNebula fixes it."
 	fi
 
-	elog "If you wish to use the sunstone server, please issue the command"
+	if use sunstone ; then
+		elog "Set nmp prefix [-g] to define working folder"
+		elog "https://docs.npmjs.com/cli/prefix"
+		elog "https://docs.npmjs.com/getting-started/fixing-npm-permissions"
+		elog "If you wish to use the sunstone server, please issue the command"
+		elog "npm install"
+		elog "bower install"
+		elog "grunt sass"
+		elog "grunt requirejs"
+		elog "as oneadmin user in /usr/lib/one/sunstone/public"
+		elog
+		elog "also you need to issue this beforehand:"
+		elog
+		elog "npm install -g bower"
+		elog "npm install -g grunt"
+		elog "npm install -g grunt-cli"
+		elog "as root"
+	fi
+	#elog "gem install sequel thin json rack sinatra builder treetop zendesk_api mysql parse-cron"
 	#elog "/usr/share/one/install_gems as oneadmin user"
-	elog "gem install sequel thin json rack sinatra builder treetop zendesk_api mysql parse-cron"
+
 }
 
